@@ -288,7 +288,7 @@ export default function LandingPage() {
               Smart Duplicate Finder
             </h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '16px' }}>
-              Search across indexed question databases to retrieve semantically matching queries with configurable similarity sliders and category filtering.
+                Search the indexed question collection with TF-IDF cosine ranking, configurable similarity thresholds, and category filtering.
             </p>
             <Link to="/duplicate-finder" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
               Search Questions <ArrowRight size={13} />

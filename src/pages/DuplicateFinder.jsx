@@ -78,7 +78,7 @@ export default function DuplicateFinder() {
           </div>
           <h1 id="finder-heading">Smart Duplicate Finder</h1>
           <p className="page-description">
-            Search the indexed question repository with TF-IDF retrieval and model-based candidate ranking.
+          Search the indexed question repository with TF-IDF retrieval and cosine-similarity ranking.
           </p>
         </div>
       </div>

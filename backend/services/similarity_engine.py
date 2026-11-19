@@ -165,7 +165,7 @@ class SimilarityEngine:
 
         clean_query = preprocess_for_tfidf(question)
         if not clean_query or not self.candidate_items:
-            return [], "TF-IDF + ML Reranking", 0
+            return [], "TF-IDF Retrieval + Cosine Similarity", 0
 
         # Vector retrieval
         q_vec = self.corpus_vectorizer.transform([clean_query])
@@ -180,7 +180,7 @@ class SimilarityEngine:
             tfidf_sim = float(raw_scores[idx])
             cand_q = item["question"]
 
-            # If tfidf_sim has sufficient baseline signal, rerank with ML model
+            # Re-score candidates with the default TF-IDF baseline when lexical signal exists.
             if tfidf_sim > 0.05:
                 # Pairwise prediction
                 is_dup, final_score, conf, method, _ = training_pipeline.predict_pair(question, cand_q)
@@ -233,7 +233,7 @@ class SimilarityEngine:
             except Exception as e:
                 logger.warning(f"Failed to record finder history: {e}")
 
-        return paginated_matches, "TF-IDF Retrieval + ML Reranking", total_matches
+        return paginated_matches, "TF-IDF Retrieval + Cosine Similarity", total_matches
 
     def suggest_questions(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
         """Fast autocomplete suggestions as user types."""

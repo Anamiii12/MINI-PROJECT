@@ -121,6 +121,7 @@ def test_find_similar_questions(client):
     data = response.json()
 
     assert "method" in data
+    assert data["method"] == "TF-IDF Retrieval + Cosine Similarity"
     assert "matches" in data
     assert isinstance(data["matches"], list)
     assert len(data["matches"]) <= 5

@@ -81,7 +81,7 @@ class MatchItem(BaseModel):
 
 
 class FindSimilarResponse(BaseModel):
-    method: str = Field(default="TF-IDF Retrieval + ML Reranking")
+    method: str = Field(default="TF-IDF Retrieval + Cosine Similarity")
     matches: List[MatchItem] = Field(default_factory=list)
     total_matches: int = 0
     page: int = 1
