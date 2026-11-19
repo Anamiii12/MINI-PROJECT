@@ -1,15 +1,10 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   Search,
-  Sliders,
-  Filter,
-  Sparkles,
-  RotateCcw,
-  Tag,
-  ListOrdered
+  RotateCcw
 } from 'lucide-react'
-import { findSimilarQuestions, isMockMode, demoQuestionCount } from '../services/api.js'
-import { FINDER_USEFUL_THRESHOLD, FINDER_LIMITS } from '../utils/textAnalysis.js'
+import { findSimilarQuestions } from '../services/api.js'
+import { FINDER_USEFUL_THRESHOLD } from '../utils/textAnalysis.js'
 import DuplicateMatchCard from '../components/DuplicateMatchCard.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 
@@ -83,7 +78,7 @@ export default function DuplicateFinder() {
           </div>
           <h1 id="finder-heading">Smart Duplicate Finder</h1>
           <p className="page-description">
-            Query the indexed question repository using hybrid TF-IDF lexical matching and calibrated ML ranking.
+            Search the indexed question repository with TF-IDF retrieval and model-based candidate ranking.
           </p>
         </div>
       </div>
@@ -245,7 +240,7 @@ export default function DuplicateFinder() {
               Search Candidate Questions
             </h3>
             <p style={{ fontSize: '13px', maxWidth: '420px', margin: '0 auto' }}>
-              Enter a question above or select an example to identify existing matches across the 90 indexed repository items.
+              Enter a question above or select an example to search the backend's indexed question collection.
             </p>
           </div>
         )}

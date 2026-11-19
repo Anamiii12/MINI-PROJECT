@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   GitCompare,
-  Search,
   Database,
   Cpu,
-  CheckCircle2,
-  AlertCircle,
-  TrendingUp,
   Layers,
   ArrowRight,
   RefreshCw,
-  Sparkles,
   BarChart2,
   Activity
 } from 'lucide-react'
@@ -31,12 +26,12 @@ export default function OverviewPage() {
     setError('')
     try {
       const [statsData, historyData] = await Promise.all([
-        getDashboardStats().catch(() => null),
-        getPredictionHistory(6).catch(() => [])
+        getDashboardStats(),
+        getPredictionHistory(6)
       ])
       setStats(statsData)
       setRecentPredictions(historyData || [])
-    } catch (err) {
+    } catch {
       setError('Unable to load dashboard metrics. Please refresh to try again.')
     } finally {
       setLoading(false)
@@ -44,28 +39,22 @@ export default function OverviewPage() {
   }
 
   useEffect(() => {
-    loadData()
+    queueMicrotask(loadData)
   }, [])
 
-  const totalQuestions = stats?.total_questions || 90
-  const duplicatePairs = stats?.total_duplicate_pairs || 87
-  const modelAccuracy = stats?.model_accuracy ? `${(stats.model_accuracy * 100).toFixed(1)}%` : '93.0%'
-  const totalDatasets = stats?.total_datasets || 4
-  const activeModelName = stats?.active_model_name || 'Random Forest Classifier'
-  const modelF1 = stats?.model_f1_score ? `${(stats.model_f1_score * 100).toFixed(1)}%` : '91.5%'
+  const totalQuestions = stats?.total_questions ?? '—'
+  const duplicatePairs = stats?.total_duplicate_pairs ?? '—'
+  const totalDatasets = stats?.total_datasets ?? '—'
+  const modelHasEvaluation = Boolean(stats && stats.active_model_name !== 'No evaluated model')
+  const activeModelName = stats?.active_model_name || 'Unavailable'
+  const modelAccuracy = modelHasEvaluation ? `${(stats.model_accuracy * 100).toFixed(1)}%` : 'Not evaluated'
+  const modelF1 = modelHasEvaluation ? `${(stats.model_f1_score * 100).toFixed(1)}%` : 'Not evaluated'
+  const categories = stats?.category_distribution || []
 
-  const categories = stats?.category_distribution || [
-    { category: 'Programming', count: 6 },
-    { category: 'Technology', count: 6 },
-    { category: 'Education', count: 6 },
-    { category: 'Money & Finance', count: 6 },
-    { category: 'Health & Fitness', count: 6 }
-  ]
-
-  const dupCount = stats?.duplicate_vs_non_duplicate?.duplicates || 87
-  const nonDupCount = stats?.duplicate_vs_non_duplicate?.non_duplicates || 74
+  const dupCount = stats?.duplicate_vs_non_duplicate?.duplicates ?? 0
+  const nonDupCount = stats?.duplicate_vs_non_duplicate?.non_duplicates ?? 0
   const totalLabeled = dupCount + nonDupCount
-  const dupPercent = totalLabeled ? Math.round((dupCount / totalLabeled) * 100) : 54
+  const dupPercent = totalLabeled ? Math.round((dupCount / totalLabeled) * 100) : 0
   const nonDupPercent = 100 - dupPercent
 
   return (
@@ -75,7 +64,7 @@ export default function OverviewPage() {
         <div className="page-title-group">
           <h1>Platform Overview</h1>
           <p className="page-description">
-            QuerySense Enterprise detects duplicate and semantically equivalent questions using multi-dimensional lexical, statistical, and calibrated machine learning models.
+            Live repository counts and recorded model evaluations from the QuerySense API.
           </p>
         </div>
         <div className="page-actions">
@@ -111,39 +100,31 @@ export default function OverviewPage() {
           label="Total Questions Analyzed"
           value={totalQuestions}
           icon={Layers}
-          subtitle="Indexed in candidate repository"
-          trend="+12%"
-          trendPositive={true}
+          subtitle="Questions currently indexed by the API"
         />
         <StatCard
           label="Duplicate Pairs Identified"
           value={duplicatePairs}
           icon={GitCompare}
-          subtitle="Verified semantic duplicates"
-          trend="+8%"
-          trendPositive={true}
+          subtitle="Labeled pairs in registered datasets"
         />
         <StatCard
           label="Active Model Accuracy"
           value={modelAccuracy}
           icon={Cpu}
-          subtitle={`Evaluated on 80/20 test split (${activeModelName})`}
-          trend="+3.2%"
-          trendPositive={true}
+          subtitle={modelHasEvaluation ? `Measured holdout result (${activeModelName})` : 'Run model evaluation to record a measured score'}
         />
         <StatCard
           label="Datasets Registered"
           value={totalDatasets}
           icon={Database}
-          subtitle="Multi-domain benchmarks & custom uploads"
-          trend="Balanced"
-          trendPositive={true}
+          subtitle="Seeded benchmarks and uploaded CSV files"
         />
       </div>
 
       {/* Main Grid: Charts & Model Status */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '24px', marginBottom: '32px' }}>
-        
+
         {/* Duplicate Distribution Card */}
         <div className="card card-padding">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
@@ -152,9 +133,9 @@ export default function OverviewPage() {
                 <BarChart2 size={17} style={{ color: 'var(--primary)' }} />
                 <span>Pair Distribution & Balance</span>
               </h2>
-              <p className="card-subtitle">Ratio of duplicate versus non-duplicate question pairs</p>
+              <p className="card-subtitle">Ratio of labeled pairs in registered datasets</p>
             </div>
-            <span className="badge badge-success">Balanced Corpus</span>
+            <span className="badge badge-info">Live dataset counts</span>
           </div>
 
           <div style={{ marginTop: '16px' }}>
@@ -259,10 +240,10 @@ export default function OverviewPage() {
               <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
                 {activeModelName}
               </span>
-              <span className="badge badge-success">Production Ready</span>
+              <span className={`badge ${modelHasEvaluation ? 'badge-success' : 'badge-info'}`}>{modelHasEvaluation ? 'Evaluated' : 'Not evaluated'}</span>
             </div>
             <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)' }}>
-              100-Estimator Non-Linear Ensemble combining TF-IDF lexical overlap, trigram Jaccard, token dice, and Latent Semantic Analysis vectors.
+              Model metadata and scores are loaded from the backend evaluation registry.
             </p>
           </div>
 
@@ -277,8 +258,8 @@ export default function OverviewPage() {
               <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--primary)' }}>{modelF1}</span>
             </div>
             <div style={{ padding: '12px 8px', background: 'var(--bg-surface-hover)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block' }}>LATENCY</span>
-              <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--success)' }}>&lt; 5ms</span>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block' }}>VERSION</span>
+              <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--success)' }}>{stats?.model_version || '—'}</span>
             </div>
           </div>
 

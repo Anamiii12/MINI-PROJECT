@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Activity,
   Award,
@@ -6,11 +6,9 @@ import {
   RefreshCw,
   BarChart2,
   Layers,
-  TrendingUp,
-  Cpu,
-  ShieldCheck
+  TrendingUp
 } from 'lucide-react'
-import { getModels, isMockMode } from '../services/api.js'
+import { getModels } from '../services/api.js'
 import StatCard from '../components/StatCard.jsx'
 import SimilarityBar from '../components/SimilarityBar.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
@@ -38,7 +36,7 @@ export default function ModelPerformancePage() {
   }
 
   useEffect(() => {
-    loadModels()
+    queueMicrotask(loadModels)
   }, [])
 
   const current = selectedModel || models[0] || null

@@ -7,6 +7,8 @@ Calculates and records actual evaluation metrics (Accuracy, Precision, Recall, F
 import time
 import json
 import logging
+import os
+import shutil
 from pathlib import Path
 from typing import Dict, List, Any, Tuple, Optional
 import numpy as np
@@ -29,8 +31,14 @@ from backend.ml.feature_extractor import PairFeatureExtractor, FEATURE_NAMES
 
 logger = logging.getLogger(__name__)
 
-SAVED_MODELS_DIR = Path(__file__).resolve().parent / "saved_models"
+_bundled_models_dir = Path(__file__).resolve().parent / "saved_models"
+SAVED_MODELS_DIR = Path(os.environ.get("QUERYSENSE_MODEL_DIR", _bundled_models_dir)).expanduser()
 SAVED_MODELS_DIR.mkdir(parents=True, exist_ok=True)
+if SAVED_MODELS_DIR != _bundled_models_dir:
+    for _model_file in _bundled_models_dir.glob("*.joblib"):
+        _destination = SAVED_MODELS_DIR / _model_file.name
+        if not _destination.exists():
+            shutil.copy2(_model_file, _destination)
 
 
 class TrainingPipeline:
@@ -167,7 +175,7 @@ class TrainingPipeline:
         })
         training_results["TF-IDF + Cosine Similarity"] = m1_metrics
 
-        # --- Model 2: Logistic Regression (Pairwise Features, Calibrated) ---
+        # --- Model 2: Logistic Regression (Pairwise Features) ---
         t0 = time.time()
         lr_model = LogisticRegression(C=1.5, max_iter=1000, random_state=42)
         lr_model.fit(X_train, y_train)
@@ -415,8 +423,7 @@ class TrainingPipeline:
 
         # Baseline TF-IDF + Cosine Similarity (Default / Baseline)
         if "Baseline" in chosen_model or "TF-IDF" in chosen_model:
-            feats = self.feature_extractor.extract_pair_features(q1, q2)
-            score = float(feats[0])  # tfidf_cosine
+            score = self.feature_extractor.tfidf_similarity(q1, q2)
             is_dup = (score >= 0.60)
             confidence = min(1.0, max(0.5, 0.5 + abs(score - 0.60)))
             return is_dup, round(score, 3), round(confidence, 3), "TF-IDF + Cosine Similarity", version

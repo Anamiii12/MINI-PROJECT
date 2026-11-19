@@ -1,16 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
-  Cpu,
+
   Play,
-  RotateCw,
   CheckCircle2,
   Clock,
-  Layers,
-  Sparkles,
-  BarChart2,
-  Sliders,
-  History,
-  Tag
+  Sliders
 } from 'lucide-react'
 import { trainModels, getModelHistory, getDatasets, isMockMode } from '../services/api.js'
 import ErrorMessage from '../components/ErrorMessage.jsx'
@@ -18,9 +12,9 @@ import ErrorMessage from '../components/ErrorMessage.jsx'
 const ARCHITECTURES = [
   {
     id: 'Logistic Regression Classifier',
-    name: 'Logistic Regression (Calibrated)',
-    desc: 'L2-regularized linear classifier trained over 12 lexical, statistical, and LSA features with Sigmoid probability calibration.',
-    type: 'Linear / Calibrated',
+    name: 'Logistic Regression',
+    desc: 'L2-regularized linear classifier trained over 12 lexical, statistical, and LSA features.',
+    type: 'Linear classifier',
     features: '12 Dimensions',
     recommended: false
   },
@@ -54,7 +48,7 @@ export default function ModelTrainingPage() {
   const [history, setHistory] = useState([])
   const [datasets, setDatasets] = useState([])
   const [selectedDatasets, setSelectedDatasets] = useState([])
-  const [versionTag, setVersionTag] = useState(`v2.${Math.floor(Date.now() / 100000) % 100}`)
+  const [versionTag, setVersionTag] = useState('')
   const [training, setTraining] = useState(false)
   const [trainResult, setTrainResult] = useState(null)
   const [error, setError] = useState('')
@@ -74,14 +68,13 @@ export default function ModelTrainingPage() {
   }
 
   useEffect(() => {
-    loadData()
+    queueMicrotask(loadData)
   }, [])
 
   // Timer while training
   useEffect(() => {
     let interval = null
     if (training) {
-      setElapsed(0)
       interval = setInterval(() => {
         setElapsed((prev) => prev + 1)
       }, 1000)
@@ -99,6 +92,7 @@ export default function ModelTrainingPage() {
     }
 
     setTraining(true)
+    setElapsed(0)
     setError('')
     setTrainResult(null)
     try {

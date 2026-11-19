@@ -1,4 +1,3 @@
-import React from 'react'
 
 export default function SimilarityBar({ score, height = 8 }) {
   const clamped = Math.max(0, Math.min(1, Number(score) || 0))

@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
-  Settings,
-  Sliders,
   Moon,
   Sun,
   Cpu,
@@ -9,11 +7,7 @@ import {
   Server,
   RefreshCw,
   CheckCircle2,
-  AlertCircle,
-  Download,
-  Trash2,
-  ShieldCheck,
-  Zap
+  AlertCircle
 } from 'lucide-react'
 import api from '../services/api.js'
 
@@ -31,10 +25,6 @@ export default function SettingsPage() {
   const [checkingBackend, setCheckingBackend] = useState(false)
   const [saveNotice, setSaveNotice] = useState('')
 
-  useEffect(() => {
-    checkHealth()
-  }, [])
-
   const checkHealth = async () => {
     setCheckingBackend(true)
     try {
@@ -48,6 +38,10 @@ export default function SettingsPage() {
       setCheckingBackend(false)
     }
   }
+
+  useEffect(() => {
+    queueMicrotask(checkHealth)
+  }, [])
 
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme)
@@ -101,7 +95,7 @@ export default function SettingsPage() {
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
-        
+
         {/* Section 1: Appearance & Theme */}
         <div className="card" style={{ padding: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
@@ -292,7 +286,7 @@ export default function SettingsPage() {
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Storage:</span>
-              <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)' }}>Persistent Local Database</span>
+              <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)' }}>Persistent service storage</span>
             </div>
           </div>
         </div>

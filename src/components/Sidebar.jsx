@@ -1,4 +1,3 @@
-import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -15,8 +14,6 @@ import {
   ChevronRight,
   Sun,
   Moon,
-  Sparkles,
-  ShieldCheck,
   X
 } from 'lucide-react'
 

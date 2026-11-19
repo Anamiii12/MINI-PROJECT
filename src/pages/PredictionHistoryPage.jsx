@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
-  History,
+
   Search,
-  Filter,
   Trash2,
   Download,
   Eye,
-  RefreshCw,
   ThumbsUp,
   ThumbsDown,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   CheckCircle2
 } from 'lucide-react'
 import {
   getPredictionHistory,
   clearPredictionHistory,
-  submitPredictionFeedback,
-  isMockMode
+  submitPredictionFeedback
 } from '../services/api.js'
 import StatusBadge from '../components/StatusBadge.jsx'
 import SimilarityBar from '../components/SimilarityBar.jsx'
@@ -54,7 +50,7 @@ export default function PredictionHistoryPage() {
   }
 
   useEffect(() => {
-    loadHistory()
+    queueMicrotask(loadHistory)
   }, [])
 
   const handleClearHistory = async () => {

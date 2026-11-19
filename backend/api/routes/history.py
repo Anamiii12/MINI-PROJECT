@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel
 
 from backend.database.db import get_db_connection
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/api/v1", tags=["History & Feedback"])
 
 
 @router.get("/history", status_code=status.HTTP_200_OK)
-async def get_prediction_history(limit: int = 50):
+async def get_prediction_history(limit: int = Query(50, ge=1, le=100)):
     """Retrieves previous question comparison predictions."""
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -52,7 +52,7 @@ async def clear_prediction_history():
 
 
 @router.get("/finder-history", status_code=status.HTTP_200_OK)
-async def get_finder_history(limit: int = 30):
+async def get_finder_history(limit: int = Query(30, ge=1, le=100)):
     """Retrieves search queries from Duplicate Finder."""
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -118,11 +118,11 @@ async def submit_prediction_feedback(payload: FeedbackRequest) -> FeedbackRespon
         # Match latest row with matching questions
         cursor.execute(
             """
-            UPDATE prediction_history 
+            UPDATE prediction_history
             SET feedback = ?
             WHERE id = (
-                SELECT id FROM prediction_history 
-                WHERE question1 = ? AND question2 = ? 
+                SELECT id FROM prediction_history
+                WHERE question1 = ? AND question2 = ?
                 ORDER BY id DESC LIMIT 1
             );
             """,

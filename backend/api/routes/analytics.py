@@ -42,7 +42,7 @@ async def get_dashboard_statistics() -> DashboardStatsResponse:
     # Duplicate vs Non-Duplicate pairs count
     cursor.execute(
         """
-        SELECT 
+        SELECT
             SUM(CASE WHEN is_duplicate = 1 THEN 1 ELSE 0 END) as duplicates,
             SUM(CASE WHEN is_duplicate = 0 THEN 1 ELSE 0 END) as non_duplicates
         FROM question_pairs;
@@ -55,7 +55,7 @@ async def get_dashboard_statistics() -> DashboardStatsResponse:
     # Average similarity score from prediction history
     cursor.execute("SELECT AVG(similarity_score) as avg_score FROM prediction_history;")
     avg_score_row = cursor.fetchone()
-    avg_sim = round(float(avg_score_row["avg_score"] or 0.62), 3)
+    avg_sim = round(float(avg_score_row["avg_score"] or 0.0), 3)
 
     # Active model performance from model_runs
     cursor.execute(
@@ -81,9 +81,9 @@ async def get_dashboard_statistics() -> DashboardStatsResponse:
         rec = round(float(active_run["recall"]), 3)
         f1 = round(float(active_run["f1_score"]), 3)
     else:
-        model_name = "Logistic Regression Classifier"
-        version = "v2.0"
-        acc, prec, rec, f1 = 0.86, 0.87, 0.85, 0.86
+        model_name = "No evaluated model"
+        version = ""
+        acc, prec, rec, f1 = 0.0, 0.0, 0.0, 0.0
 
     # Category distribution
     cursor.execute(
@@ -100,7 +100,7 @@ async def get_dashboard_statistics() -> DashboardStatsResponse:
     # Recent activity feed
     cursor.execute(
         """
-        SELECT 'prediction' as type, question1 as title, 
+        SELECT 'prediction' as type, question1 as title,
                'Compared with: ' || question2 || ' (' || CASE WHEN is_duplicate = 1 THEN 'Duplicate' ELSE 'Non-Duplicate' END || ')' as details,
                similarity_score as score, created_at
         FROM prediction_history
@@ -164,17 +164,12 @@ async def generate_viva_report():
 
     md = f"""# QuerySense Project Report: Intelligent Duplicate Question Detection
 **Generated Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-**Academic Level:** CSE Mini-Project / Final Demonstration
+**System:** QuerySense duplicate-question analysis service
 
 ---
 
 ## 1. Executive Summary
-QuerySense is an AI-powered text similarity and duplicate question detection platform.
-It replaces rudimentary single-metric word-matching with a multi-stage NLP & Machine Learning pipeline:
-1. **Lexical Analysis:** Normalized token overlap, Sørensen-Dice coefficient, Jaccard similarity.
-2. **Statistical Features:** TF-IDF with character and sublinear word n-grams (1, 2).
-3. **Semantic Modeling:** Latent Semantic Analysis (TruncatedSVD) dimensionality reduction to capture latent conceptual topics.
-4. **Machine Learning Classifiers:** Calibrated Logistic Regression and Random Forest ensembles with probability calibration.
+QuerySense compares question text using TF-IDF, token and character overlap features, a truncated-SVD representation, and supervised classifiers trained from registered question-pair datasets.
 
 ---
 
@@ -207,10 +202,8 @@ All models are evaluated on a held-out test split (20% stratified) without data 
     md += """
 ---
 
-## 4. Key Engineering Insights
-1. **Limitation of Keyword Overlap:** Baseline TF-IDF cosine similarity fails on paraphrased questions with different vocabulary (e.g., *"How can I become wealthy?"* vs *"Ways to build wealth"*).
-2. **Superiority of Multi-Feature Classifiers:** By combining TF-IDF cosine, token Dice, character trigrams, and LSA semantic features, the classifier achieves significant gains in F1-score.
-3. **Calibrated Probabilities:** The system distinguishes between raw cosine distance and calibrated posterior probability $P(\\text{duplicate} \\mid \\mathbf{x})$.
+## 4. Interpretation
+The TF-IDF baseline reports cosine similarity. Classifier methods report the model's duplicate-class probability. These score types are not interchangeable. Evaluation metrics are included only when a training run has been recorded.
 
 ---
 *QuerySense — Department of Computer Science & Engineering*

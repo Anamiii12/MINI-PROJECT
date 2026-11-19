@@ -1,15 +1,12 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   Menu,
   Search,
   Bell,
-  GitCompare,
   Plus,
   Moon,
-  Sun,
-  Database,
-  ExternalLink
+  Sun
 } from 'lucide-react'
 
 const ROUTE_NAMES = {
@@ -117,11 +114,11 @@ export default function TopNavbar({ onOpenMobile, theme, setTheme }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
                 <div style={{ padding: '8px 10px', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)' }}>
                   <p style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Analysis Engine Ready</p>
-                  <p style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>4 detection models initialised and available.</p>
+                  <p style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Model availability is shown in the Model Performance page.</p>
                 </div>
                 <div style={{ padding: '8px 10px', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)' }}>
                   <p style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Question Repository</p>
-                  <p style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>90 questions indexed across 15 topic domains.</p>
+                  <p style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>Candidate questions are loaded from the backend repository.</p>
                 </div>
               </div>
             </div>

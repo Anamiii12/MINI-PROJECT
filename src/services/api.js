@@ -5,7 +5,9 @@ import { questions as demoQuestions } from '../mocks/questions.js'
 
 export const demoQuestionCount = demoQuestions.length
 export const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/+$/, '')
-export const isMockMode = import.meta.env.VITE_USE_MOCK_API !== 'false'
+// Development can use local demos; production must opt in explicitly.
+export const isMockMode = import.meta.env.VITE_USE_MOCK_API === 'true' ||
+  (!import.meta.env.PROD && import.meta.env.VITE_USE_MOCK_API !== 'false')
 
 function validatePrediction(data) {
   if (!data || typeof data.is_duplicate !== 'boolean' ||
@@ -317,4 +319,3 @@ const api = {
 }
 
 export default api
-

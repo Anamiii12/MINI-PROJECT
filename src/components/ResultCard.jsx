@@ -1,12 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
-  CheckCircle2,
-  XCircle,
   ThumbsUp,
   ThumbsDown,
   Copy,
   Check,
-  Sparkles,
   Info,
   ChevronDown,
   ChevronUp

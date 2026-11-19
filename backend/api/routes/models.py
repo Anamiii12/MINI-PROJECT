@@ -1,13 +1,16 @@
 import json
+import asyncio
 from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
+from starlette.concurrency import run_in_threadpool
 
 from backend.database.db import get_db_connection
 from backend.ml.trainer import training_pipeline
 from backend.api.schemas import TrainRequest, TrainResponse, ModelInfoItem
 
 router = APIRouter(prefix="/api/v1", tags=["Models & Evaluation"])
+_training_lock = asyncio.Lock()
 
 
 @router.get("/models", response_model=List[ModelInfoItem], status_code=status.HTTP_200_OK)
@@ -65,11 +68,15 @@ async def train_models_endpoint(payload: TrainRequest = TrainRequest()) -> Train
     Computes genuine test evaluation metrics and saves trained artifacts to disk.
     Never fabricates metrics.
     """
+    if _training_lock.locked():
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Model training is already running.")
     try:
-        res = training_pipeline.run_training_and_evaluation(
-            dataset_ids=payload.dataset_ids,
-            version_tag=payload.version_tag
-        )
+        async with _training_lock:
+            res = await run_in_threadpool(
+                training_pipeline.run_training_and_evaluation,
+                dataset_ids=payload.dataset_ids,
+                version_tag=payload.version_tag,
+            )
         return TrainResponse(
             status=res["status"],
             version=res["version"],
@@ -84,7 +91,7 @@ async def train_models_endpoint(payload: TrainRequest = TrainRequest()) -> Train
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Model training failed: {str(e)}"
+            detail="Model training failed. Check the service logs for details."
         )
 
 

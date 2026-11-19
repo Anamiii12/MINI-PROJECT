@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: querysense-anamiii12-api
+    runtime: python
+    plan: starter
+    branch: main
+    autoDeploy: false
+    buildCommand: pip install --no-cache-dir -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /health
+    disk:
+      name: querysense-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.11
+      - key: QUERYSENSE_DB_PATH
+        value: /var/data/querysense.db
+      - key: QUERYSENSE_MODEL_DIR
+        value: /var/data/models
+      - key: CORS_ORIGINS
+        value: https://anamiii12.github.io

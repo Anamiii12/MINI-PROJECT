@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import QuestionComparisonForm from '../components/QuestionComparisonForm.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import ResultCard from '../components/ResultCard.jsx'
-import { compareQuestions, isMockMode } from '../services/api.js'
-import { GitCompare, Sparkles, ShieldCheck } from 'lucide-react'
+import { compareQuestions } from '../services/api.js'
 
 export default function ComparePage() {
   const [question1, setQuestion1] = useState('')

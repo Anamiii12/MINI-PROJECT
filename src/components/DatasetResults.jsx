@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { Download, Filter, ArrowUpDown, ChevronLeft, ChevronRight, BarChart2 } from 'lucide-react'
+import { useState } from 'react'
+import { Download, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getSimilarityLabel } from '../utils/textAnalysis.js'
 import { createResultsCsv, downloadCsv } from '../utils/csv.js'
 import SimilarityBar from './SimilarityBar.jsx'
-import StatusBadge from './StatusBadge.jsx'
+import './StatusBadge.jsx'
 
 export default function DatasetResults({ result }) {
   const [filter, setFilter] = useState('all')

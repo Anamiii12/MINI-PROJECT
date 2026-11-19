@@ -1,4 +1,3 @@
-import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import LandingPage from './pages/LandingPage.jsx'
 import AppLayout from './components/AppLayout.jsx'
@@ -15,7 +14,7 @@ import SettingsPage from './pages/SettingsPage.jsx'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         {/* Public Home Page (Landing Page) */}
         <Route path="/" element={<LandingPage />} />

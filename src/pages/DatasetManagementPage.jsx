@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
-  Database,
+
   UploadCloud,
   FileText,
   Trash2,
   Eye,
   Download,
-  AlertCircle,
   CheckCircle2,
   Plus,
-  RefreshCw,
-  Search
+  RefreshCw
 } from 'lucide-react'
 import Modal from '../components/Modal.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
@@ -19,8 +17,7 @@ import {
   uploadDataset,
   deleteDataset,
   previewDataset,
-  getDownloadDatasetUrl,
-  isMockMode
+  getDownloadDatasetUrl
 } from '../services/api.js'
 
 export default function DatasetManagementPage() {
@@ -28,7 +25,7 @@ export default function DatasetManagementPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
-  
+
   // Upload form state
   const [uploadName, setUploadName] = useState('')
   const [uploadSource, setUploadSource] = useState('User Upload')
@@ -57,7 +54,7 @@ export default function DatasetManagementPage() {
   }
 
   useEffect(() => {
-    loadDatasets()
+    queueMicrotask(loadDatasets)
   }, [])
 
   const handleFileDrop = (e) => {
@@ -65,11 +62,13 @@ export default function DatasetManagementPage() {
     setIsDragging(false)
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0]
-      if (file.name.endsWith('.csv')) {
+      if (file.name.toLowerCase().endsWith('.csv') && file.size <= 2 * 1024 * 1024) {
         setSelectedFile(file)
         if (!uploadName) {
           setUploadName(file.name.replace('.csv', '').replace(/[-_]/g, ' '))
         }
+      } else if (file.size > 2 * 1024 * 1024) {
+        setError('CSV files must be 2 MB or smaller.')
       } else {
         setError('Only CSV (.csv) files are supported.')
       }
@@ -79,9 +78,15 @@ export default function DatasetManagementPage() {
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
-      setSelectedFile(file)
-      if (!uploadName) {
-        setUploadName(file.name.replace('.csv', '').replace(/[-_]/g, ' '))
+      if (!file.name.toLowerCase().endsWith('.csv')) {
+        setError('Only CSV (.csv) files are supported.')
+      } else if (file.size > 2 * 1024 * 1024) {
+        setError('CSV files must be 2 MB or smaller.')
+      } else {
+        setSelectedFile(file)
+        if (!uploadName) {
+          setUploadName(file.name.replace(/\.csv$/i, '').replace(/[-_]/g, ' '))
+        }
       }
     }
   }
@@ -97,7 +102,7 @@ export default function DatasetManagementPage() {
     setError('')
     setSuccessMsg('')
     try {
-      const res = await uploadDataset(selectedFile, uploadName.trim(), uploadSource, uploadDesc)
+      await uploadDataset(selectedFile, uploadName.trim(), uploadSource, uploadDesc)
       setSuccessMsg(`Dataset "${uploadName}" uploaded and indexed successfully!`)
       setSelectedFile(null)
       setUploadName('')
@@ -117,7 +122,7 @@ export default function DatasetManagementPage() {
       await deleteDataset(id)
       setSuccessMsg(`Dataset "${name}" deleted.`)
       await loadDatasets()
-    } catch (err) {
+    } catch {
       setError('Failed to delete dataset.')
     }
   }
@@ -222,7 +227,7 @@ export default function DatasetManagementPage() {
               {selectedFile ? selectedFile.name : 'Drag & drop your CSV dataset here, or click to browse'}
             </p>
             <p style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>
-              {selectedFile ? `${(selectedFile.size / 1024).toFixed(1)} KB · Ready to import` : 'Standard UTF-8 CSV · Maximum 25MB'}
+              {selectedFile ? `${(selectedFile.size / 1024).toFixed(1)} KB · Ready to import` : 'Standard UTF-8 CSV · Maximum 2 MB'}
             </p>
           </div>
 

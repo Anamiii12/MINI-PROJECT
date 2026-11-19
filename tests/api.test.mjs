@@ -7,6 +7,7 @@ async function loadService(mock) {
   source = source.replace(/from '([^']+)'/g, (_, relative) => `from '${new URL(relative, new URL('../src/services/api.js', import.meta.url)).href}'`)
   source = source.replaceAll('import.meta.env.VITE_API_BASE_URL', JSON.stringify('http://localhost:8000/'))
     .replaceAll('import.meta.env.VITE_USE_MOCK_API', JSON.stringify(String(mock)))
+    .replaceAll('import.meta.env.PROD', 'false')
   return import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'))
 }
 

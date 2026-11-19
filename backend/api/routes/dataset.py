@@ -107,13 +107,15 @@ async def upload_custom_dataset(
     - Single question format: (question, optional category)
     Cleans data, inserts into SQLite, and updates candidate repository.
     """
-    if not file.filename.endswith(".csv"):
+    if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only CSV files (.csv) are supported."
         )
 
-    content = await file.read()
+    content = await file.read(2 * 1024 * 1024 + 1)
+    if len(content) > 2 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="CSV uploads must be 2 MB or smaller.")
     try:
         decoded = content.decode("utf-8-sig")
     except Exception:
@@ -155,7 +157,7 @@ async def upload_custom_dataset(
                 q2 = row[q2_idx].strip()
                 if not q1 or not q2 or len(q1) > 1000 or len(q2) > 1000:
                     continue
-                
+
                 is_dup = 0
                 if dup_idx != -1 and len(row) > dup_idx:
                     val = row[dup_idx].strip().lower()
@@ -164,6 +166,8 @@ async def upload_custom_dataset(
 
                 cat = row[cat_idx].strip() if (cat_idx != -1 and len(row) > cat_idx and row[cat_idx].strip()) else categorizer.predict_category(q1)
                 pairs.append((q1, q2, is_dup, cat))
+                if len(pairs) > 10000:
+                    raise HTTPException(status_code=413, detail="CSV uploads are limited to 10,000 rows.")
 
             if not pairs:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No valid question pairs found in CSV.")
@@ -210,6 +214,8 @@ async def upload_custom_dataset(
                     continue
                 cat = row[cat_idx].strip() if (cat_idx != -1 and len(row) > cat_idx and row[cat_idx].strip()) else categorizer.predict_category(q)
                 questions.append((q, cat))
+                if len(questions) > 10000:
+                    raise HTTPException(status_code=413, detail="CSV uploads are limited to 10,000 rows.")
 
             if not questions:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No valid questions found in CSV.")

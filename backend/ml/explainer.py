@@ -133,5 +133,5 @@ def explain_prediction(
         "reasons": reasons,
         "method": method_name,
         "model_version": model_version,
-        "is_calibrated": ("Classifier" in method_name or "Logistic" in method_name or "Forest" in method_name)
+        "is_calibrated": False
     }

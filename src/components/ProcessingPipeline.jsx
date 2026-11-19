@@ -24,6 +24,6 @@ export default function ProcessingPipeline() {
         <h3>{title}</h3><p>{description}</p><div className="step-detail"><StepDetail index={index} /></div>
       </article>
     </li>)}</ol>
-    <p className="pipeline-note">Planned processing stages. The current demo uses word overlap; these stages do not represent live processing.</p>
+    <p className="pipeline-note">Live requests use the configured FastAPI service for preprocessing, feature extraction, model inference, and ranked results.</p>
   </section>
 }

@@ -1,10 +1,8 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Sparkles, ArrowRight, Tag } from 'lucide-react'
+import { Tag } from 'lucide-react'
 import SimilarityBar from './SimilarityBar.jsx'
 import { getFinderSimilarityLabel } from '../utils/textAnalysis.js'
 
-export default function DuplicateMatchCard({ match, rank, originalQuestion }) {
+export default function DuplicateMatchCard({ match, rank }) {
   const scorePercent = (match.similarity_score * 100).toFixed(1)
   const isHigh = match.similarity_score >= 0.70
 

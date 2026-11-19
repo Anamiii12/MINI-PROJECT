@@ -1,4 +1,3 @@
-import React from 'react'
 
 export default function StatCard({ label, value, icon: Icon, subtitle, trend, trendPositive }) {
   return (

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import {
   GitCompare,
   Search,
@@ -7,66 +7,40 @@ import {
   Cpu,
   Activity,
   History,
-  BookOpen,
   ArrowRight,
   Sparkles,
   CheckCircle2,
-  ShieldCheck,
-  Zap,
-  BarChart2,
-  Layers,
   ChevronRight,
   Sun,
-  Moon,
-  ExternalLink,
-  Code2,
-  Terminal,
-  HelpCircle
+  Moon
 } from 'lucide-react'
+import { healthCheck, isMockMode } from '../services/api.js'
 
 export default function LandingPage() {
-  const navigate = useNavigate()
+
   const [theme, setTheme] = useState(() => localStorage.getItem('qs_theme') || 'light')
+  const [backendStatus, setBackendStatus] = useState('checking')
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('qs_theme', theme)
   }, [theme])
 
+  useEffect(() => {
+    let active = true
+    healthCheck()
+      .then(() => active && setBackendStatus('available'))
+      .catch(() => active && setBackendStatus('unavailable'))
+    return () => { active = false }
+  }, [])
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
 
-  // Interactive Hero Demo State
-  const [activeDemo, setActiveDemo] = useState(0)
-  const demoPairs = [
-    {
-      q1: 'How do I start learning Python programming?',
-      q2: 'What is the best way to learn Python for beginners?',
-      score: 94.2,
-      isDup: true,
-      category: 'Programming',
-      matchingWords: ['python', 'learning', 'programming', 'beginners']
-    },
-    {
-      q1: 'How can I bake sourdough bread with a crispy crust?',
-      q2: 'What are the principles of quantum computing and superposition?',
-      score: 0.0,
-      isDup: false,
-      category: 'Cross-Domain',
-      matchingWords: []
-    },
-    {
-      q1: 'How do I become financially independent in five years?',
-      q2: 'What strategies can help me achieve financial freedom?',
-      score: 87.5,
-      isDup: true,
-      category: 'Finance',
-      matchingWords: ['financial', 'freedom', 'independent', 'strategies']
-    }
-  ]
-
-  const currentDemo = demoPairs[activeDemo]
+  const serviceLabel = isMockMode
+    ? 'Development demo mode'
+    : backendStatus === 'available' ? 'API connected' : backendStatus === 'checking' ? 'Checking API…' : 'API unavailable'
 
   return (
     <div className="landing-page-root" style={{ minHeight: '100vh', background: 'var(--bg-app)', color: 'var(--text-primary)' }}>
@@ -210,7 +184,7 @@ export default function LandingPage() {
               maxWidth: '560px'
             }}
           >
-            QuerySense is an intelligent text similarity platform designed to identify duplicate questions across large corpora, forums, and knowledge bases using multi-perspective feature engineering and calibrated machine learning.
+            QuerySense compares question pairs and ranks related questions using TF-IDF features and trained classification models.
           </p>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', alignItems: 'center' }}>
@@ -235,136 +209,44 @@ export default function LandingPage() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginTop: '36px', paddingTop: '24px', borderTop: '1px solid var(--border-subtle)' }}>
             <div>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>93.0%</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Evaluated Test Accuracy</span>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>Live API</span>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Configured service</span>
             </div>
             <div style={{ width: '1px', height: '30px', background: 'var(--border-subtle)' }} />
             <div>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>14 Features</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Lexical & Concept Vectors</span>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>TF-IDF + ML</span>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Backend inference</span>
             </div>
             <div style={{ width: '1px', height: '30px', background: 'var(--border-subtle)' }} />
             <div>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>&lt; 50 ms</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Inference Latency</span>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>Health check</span>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Service availability</span>
             </div>
           </div>
         </div>
 
-        {/* Hero Interactive Visualization Card */}
-        <div
-          className="card"
-          style={{
-            padding: '28px',
-            boxShadow: 'var(--shadow-lg)',
-            border: '1px solid var(--border-default)',
-            background: 'var(--bg-surface)'
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981' }} />
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Live Inference Demonstration</span>
+        <div className="card card-padding" style={{ boxShadow: 'var(--shadow-lg)', border: '1px solid var(--border-default)', background: 'var(--bg-surface)', minHeight: '300px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: backendStatus === 'available' ? '#10B981' : backendStatus === 'checking' ? '#D4A017' : '#DC5A52' }} />
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Backend status</span>
             </div>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {demoPairs.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveDemo(idx)}
-                  style={{
-                    padding: '3px 10px',
-                    borderRadius: '100px',
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: activeDemo === idx ? 'var(--primary)' : 'var(--bg-subtle)',
-                    color: activeDemo === idx ? '#FFFFFF' : 'var(--text-secondary)',
-                    transition: 'all 120ms ease'
-                  }}
-                >
-                  Pair 0{idx + 1}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Question 1 Box */}
-          <div style={{ background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '14px', marginBottom: '12px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '4px' }}>
-              Question 01
-            </span>
-            <p style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500 }}>
-              "{currentDemo.q1}"
+            <h2 style={{ fontSize: '24px', marginBottom: '10px', color: 'var(--text-primary)' }}>{serviceLabel}</h2>
+            <p style={{ fontSize: '14px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+              {isMockMode
+                ? 'Local development is using the optional demo scorer.'
+                : backendStatus === 'available'
+                  ? 'Predictions and search results are served by the QuerySense API.'
+                  : backendStatus === 'checking'
+                    ? 'Connecting to the configured QuerySense API.'
+                    : 'The API did not respond. Check the service status and try again.'}
             </p>
           </div>
-
-          {/* Question 2 Box */}
-          <div style={{ background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', padding: '14px', marginBottom: '18px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '4px' }}>
-              Question 02
-            </span>
-            <p style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500 }}>
-              "{currentDemo.q2}"
-            </p>
-          </div>
-
-          {/* Prediction Result Gauge */}
-          <div
-            style={{
-              padding: '16px',
-              borderRadius: 'var(--radius-md)',
-              background: currentDemo.isDup ? 'var(--status-duplicate-bg)' : 'var(--status-nondup-bg)',
-              border: `1px solid ${currentDemo.isDup ? 'var(--status-duplicate-border)' : 'var(--status-nondup-border)'}`,
-              marginBottom: '16px'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CheckCircle2 size={18} color={currentDemo.isDup ? '#102D26' : '#7B847E'} />
-                <span style={{ fontSize: '14px', fontWeight: 700, color: currentDemo.isDup ? 'var(--status-duplicate-text)' : 'var(--status-nondup-text)' }}>
-                  {currentDemo.isDup ? 'Duplicate Question' : 'Distinct Question'}
-                </span>
-              </div>
-              <span style={{ fontSize: '18px', fontWeight: 800, color: currentDemo.isDup ? 'var(--primary-dark)' : 'var(--text-secondary)' }}>
-                {currentDemo.score}%
-              </span>
-            </div>
-
-            {/* Visual Bar */}
-            <div style={{ width: '100%', height: '8px', background: 'rgba(0,0,0,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
-              <div
-                style={{
-                  width: `${currentDemo.score}%`,
-                  height: '100%',
-                  background: currentDemo.isDup ? 'linear-gradient(90deg, #173F35, #2A6355)' : '#7B847E',
-                  transition: 'width 300ms ease'
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Keywords & Quick Action */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              {currentDemo.matchingWords.length > 0 ? (
-                currentDemo.matchingWords.map((w) => (
-                  <span key={w} style={{ fontSize: '11.5px', background: 'var(--bg-subtle)', padding: '2px 8px', borderRadius: '4px', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                    #{w}
-                  </span>
-                ))
-              ) : (
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>0 common keywords &middot; Disjoint concepts</span>
-              )}
-            </div>
-
-            <Link to="/compare" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span>Try your own pair</span>
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-      </section>
+          <Link to="/compare" className="btn btn-primary" style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <span>Run a live comparison</span>
+            <ArrowRight size={16} />
+          </Link>
+        </div>      </section>
 
       {/* 3. Key Features Section */}
       <section id="features" style={{ padding: '80px 24px', maxWidth: '1280px', margin: '0 auto' }}>
@@ -376,7 +258,7 @@ export default function LandingPage() {
             Everything You Need to Audit & Detect Duplicate Inquiries
           </h2>
           <p style={{ fontSize: '16px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            Engineered from the ground up for transparent similarity evaluation, reproducible ML training, and sub-millisecond retrieval.
+            Compare question pairs, search the indexed repository, and inspect measured model evaluations and dataset results.
           </p>
         </div>
 
@@ -390,7 +272,7 @@ export default function LandingPage() {
               Pairwise Semantic Comparison
             </h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '16px' }}>
-              Compare two questions side-by-side with live character counters, instant token alignment, fuzzy matching, and multi-model probability estimation.
+              Compare two questions with the selected backend model and inspect the returned score, confidence, and explanation.
             </p>
             <Link to="/compare" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--primary)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
               Compare Questions <ArrowRight size={13} />
@@ -514,10 +396,10 @@ export default function LandingPage() {
                 STEP 02
               </span>
               <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                14-D Feature Extraction
+                12 Pair Features
               </h3>
               <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                Computes Jaccard overlap, Levenshtein edit distance, length disparity, token sorting, and TF-IDF cosine angles.
+                Includes TF-IDF cosine, token overlap, character-trigram overlap, length differences, and LSA similarity.
               </p>
             </div>
 
@@ -530,7 +412,7 @@ export default function LandingPage() {
                 Latent Semantic Projection
               </h3>
               <p style={{ fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                Truncated SVD reduces vocabulary sparsity, capturing conceptual synonyms that share zero literal word overlap.
+                Truncated SVD projects the fitted TF-IDF corpus into a lower-dimensional space for semantic similarity scoring.
               </p>
             </div>
 
@@ -568,7 +450,7 @@ export default function LandingPage() {
               React 18 &amp; Vite
             </h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Single-page architecture with responsive navigation, fluid dark mode, and sub-second asset compilation.
+              Single-page architecture with responsive navigation, theme preferences, and direct route refresh support.
             </p>
           </div>
 
@@ -588,7 +470,7 @@ export default function LandingPage() {
               Scikit-Learn &amp; Joblib
             </h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Random Forest, Logistic Regression, and Truncated SVD vectorizers persisted for zero-cold-start inference.
+              Random Forest and Logistic Regression classifiers use a persisted feature extractor; TF-IDF remains the default baseline.
             </p>
           </div>
 
@@ -665,7 +547,7 @@ export default function LandingPage() {
             Ready to Eliminate Duplicate Questions?
           </h2>
           <p style={{ fontSize: '17px', color: '#DCE9DF', maxWidth: '620px', margin: '0 auto 32px', lineHeight: 1.6 }}>
-            Launch the QuerySense application to compare inquiries, index custom datasets, and train production-ready NLP models.
+            Launch QuerySense to compare inquiries, manage datasets, and train models evaluated on a held-out split.
           </p>
           <Link
             to="/dashboard"

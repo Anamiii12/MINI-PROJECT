@@ -1,21 +1,16 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   UploadCloud,
-  FileText,
-  BarChart2,
   Download,
-  AlertCircle,
   RotateCcw,
-  Sparkles,
-  PieChart,
-  CheckCircle2
+  Sparkles
 } from 'lucide-react'
-import { analyzeDataset, isMockMode } from '../services/api.js'
+import { analyzeDataset } from '../services/api.js'
 import { validateCsvFile, parseQuestionCsv, createSampleCsv, downloadCsv } from '../utils/csv.js'
-import { MAX_DEMO_QUESTIONS } from '../utils/textAnalysis.js'
+
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import DatasetResults from '../components/DatasetResults.jsx'
-import StatCard from '../components/StatCard.jsx'
+import '../components/StatCard.jsx'
 
 export default function DatasetAnalyzer() {
   const [dataset, setDataset] = useState(null)

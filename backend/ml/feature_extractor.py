@@ -100,6 +100,16 @@ class PairFeatureExtractor:
             dp = cur
         return max_len
 
+    def tfidf_similarity(self, q1: str, q2: str) -> float:
+        """Calculates only the baseline score without the unused pair features."""
+        clean1 = preprocess_for_tfidf(q1)
+        clean2 = preprocess_for_tfidf(q2)
+        if not clean1 or not clean2 or not self.is_fitted or self.vectorizer is None:
+            return 0.0
+        vectors = self.vectorizer.transform([clean1, clean2])
+        score = cosine_similarity(vectors[0], vectors[1])[0][0]
+        return float(max(0.0, min(1.0, score)))
+
     def extract_pair_features(self, q1: str, q2: str) -> np.ndarray:
         """Extracts 1D feature vector for a pair of questions."""
         norm1 = normalize_text(q1)

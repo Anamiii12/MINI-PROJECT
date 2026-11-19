@@ -13,15 +13,17 @@ from typing import List, Dict, Any, Optional, Tuple
 logger = logging.getLogger(__name__)
 
 DB_DIR = Path(__file__).resolve().parent
-DB_PATH = DB_DIR / "querysense.db"
+DB_PATH = Path(os.environ.get("QUERYSENSE_DB_PATH", DB_DIR / "querysense.db")).expanduser()
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
 def get_db_connection() -> sqlite3.Connection:
     """Returns a SQLite connection with dict-like row factory and WAL mode."""
-    conn = sqlite3.connect(str(DB_PATH), check_same_thread=False)
+    conn = sqlite3.connect(str(DB_PATH), timeout=30, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA foreign_keys=ON;")
+    conn.execute("PRAGMA busy_timeout=30000;")
     return conn
 
 
@@ -116,7 +118,3 @@ def init_db():
     conn.commit()
     conn.close()
     logger.info("Database schema verified at %s", DB_PATH)
-
-
-# Initialize schema on module import
-init_db()

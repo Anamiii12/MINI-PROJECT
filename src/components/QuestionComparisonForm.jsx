@@ -1,11 +1,8 @@
-import React from 'react'
 import {
   ArrowRightLeft,
   Sparkles,
   RotateCcw,
-  Cpu,
-  Layers,
-  HelpCircle
+  Cpu
 } from 'lucide-react'
 
 export default function QuestionComparisonForm({
@@ -55,7 +52,7 @@ export default function QuestionComparisonForm({
           >
             <option value="TF-IDF + Cosine Similarity">TF-IDF + Cosine Similarity (Baseline)</option>
             <option value="Random Forest Classifier">Random Forest Classifier (Ensemble)</option>
-            <option value="Logistic Regression Classifier">Logistic Regression (Calibrated)</option>
+            <option value="Logistic Regression Classifier">Logistic Regression</option>
             <option value="Semantic LSA Similarity Model">Semantic LSA Latent Vectors</option>
           </select>
         </div>

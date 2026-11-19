@@ -13,8 +13,8 @@ class PredictRequest(BaseModel):
         if not isinstance(v, str) or not v.strip():
             raise ValueError(f"'{info.field_name}' must be a non-empty string.")
         cleaned = v.strip()
-        if len(cleaned) > 1000:
-            raise ValueError(f"'{info.field_name}' exceeds maximum allowed length of 1000 characters.")
+        if len(cleaned) > 500:
+            raise ValueError(f"'{info.field_name}' exceeds maximum allowed length of 500 characters.")
         return cleaned
 
 
@@ -54,7 +54,7 @@ class FindSimilarRequest(BaseModel):
     limit: int = Field(default=10, ge=1, le=50, description="Maximum number of similar questions to return")
     category: Optional[str] = Field(default=None, description="Category filter (e.g. Programming, Education)")
     threshold: float = Field(default=0.0, ge=0.0, le=1.0, description="Minimum similarity threshold")
-    sort_by: str = Field(default="highest", description="Sort order: 'highest' or 'lowest'")
+    sort_by: str = Field(default="highest", pattern="^(highest|lowest)$", description="Sort order: 'highest' or 'lowest'")
     page: int = Field(default=1, ge=1, description="Page number")
     page_size: int = Field(default=10, ge=1, le=50, description="Page size")
 
@@ -64,8 +64,8 @@ class FindSimilarRequest(BaseModel):
         if not isinstance(v, str) or not v.strip():
             raise ValueError("'question' must be a non-empty string.")
         cleaned = v.strip()
-        if len(cleaned) > 1000:
-            raise ValueError("'question' exceeds maximum allowed length of 1000 characters.")
+        if len(cleaned) > 500:
+            raise ValueError("'question' exceeds maximum allowed length of 500 characters.")
         return cleaned
 
 
@@ -81,7 +81,7 @@ class MatchItem(BaseModel):
 
 
 class FindSimilarResponse(BaseModel):
-    method: str = Field(default="Hybrid TF-IDF + Calibrated ML Model")
+    method: str = Field(default="TF-IDF Retrieval + ML Reranking")
     matches: List[MatchItem] = Field(default_factory=list)
     total_matches: int = 0
     page: int = 1
@@ -111,8 +111,8 @@ class DatasetAnalysisRequest(BaseModel):
             if not isinstance(item, str) or not item.strip():
                 raise ValueError(f"Question at index {idx} must be a non-empty string.")
             cleaned = item.strip()
-            if len(cleaned) > 1000:
-                raise ValueError(f"Question at index {idx} exceeds maximum allowed length of 1000 characters.")
+            if len(cleaned) > 500:
+                raise ValueError(f"Question at index {idx} exceeds maximum allowed length of 500 characters.")
             cleaned_list.append(cleaned)
         return cleaned_list
 

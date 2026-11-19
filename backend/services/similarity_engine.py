@@ -189,7 +189,7 @@ class SimilarityEngine:
                 is_dup = False
                 conf = 0.50
 
-            if final_score >= threshold:
+            if final_score > 0 and final_score >= threshold:
                 matched_terms = extract_matched_terms(question, cand_q)
                 filtered_results.append({
                     "id": item.get("id", idx + 1),
@@ -233,7 +233,7 @@ class SimilarityEngine:
             except Exception as e:
                 logger.warning(f"Failed to record finder history: {e}")
 
-        return paginated_matches, "Hybrid TF-IDF + Calibrated ML Model", total_matches
+        return paginated_matches, "TF-IDF Retrieval + ML Reranking", total_matches
 
     def suggest_questions(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
         """Fast autocomplete suggestions as user types."""
