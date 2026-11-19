@@ -1,0 +1,36 @@
+question1,question2,is_duplicate,category
+How do I undo the most recent local commits in Git?,How can I undo the last commit in Git without losing changes?,1,Programming
+How do I clone a specific Git branch rather than the default branch?,Is there a way to clone only one branch in Git?,1,Programming
+How do I check if a JavaScript object has a property?,What is the best way to test if a key exists in a JS object?,1,Programming
+How to iterate over a dictionary using a for loop in Python?,What is the correct syntax to loop through keys and values of a Python dict?,1,Programming
+How do I delete a Git branch both locally and remotely?,How can I remove a branch in Git locally and on origin?,1,Programming
+How do I redirect to another webpage using JavaScript?,How can I navigate to a new URL in JavaScript?,1,Programming
+What is the difference between '==' and '===' in JavaScript?,Why should I use strict equality '===' over loose equality '==' in JS?,1,Programming
+How do I merge two dictionaries in a single expression in Python?,What is the most pythonic way to combine two dicts?,1,Programming
+How to vertically align text inside a CSS div?,How do I center text vertically in CSS using Flexbox?,1,Programming
+How do I parse a JSON string into an object in Python?,How can I convert a JSON string to a Python dictionary?,1,Programming
+How to find the length of an array in JavaScript?,How do I get the number of elements in a JavaScript array?,1,Programming
+How do I discard unstaged changes in Git working directory?,What Git command reverts all uncommitted file modifications?,1,Programming
+How to sort a list of dictionaries by a specific dictionary value in Python?,How can I sort a Python list of dicts based on a key?,1,Programming
+How do I resolve merge conflicts in Git?,What is the procedure to fix conflicts during a Git merge?,1,Programming
+How do I check if a file exists before opening it in Python?,How can I verify whether a path exists in Python?,1,Programming
+How do I pass query parameters in a fetch API GET request?,How can I append URL search parameters to a JavaScript fetch call?,1,Programming
+How to convert a string to an integer in Python?,How do I cast str to int in Python safely?,1,Programming
+How do I copy text to clipboard using JavaScript?,What is the modern navigator.clipboard API method to copy text?,1,Programming
+How to prevent SQL injection in Python with SQLite?,How do I use parameterized queries in SQLite3 to avoid SQL injection?,1,Programming
+How do I remove duplicates from a Python list while preserving order?,What is the best way to deduplicate a list in Python in order?,1,Programming
+How do I stash changes in Git?,How do I discard changes in Git?,0,Programming
+What is the difference between null and undefined in JavaScript?,"What is the difference between var, let, and const in JavaScript?",0,Programming
+How do I append to a list in Python?,How do I extend a list with another list in Python?,0,Programming
+How do I filter an array in JavaScript?,How do I map an array to new values in JavaScript?,0,Programming
+How do I read a CSV file in Python using pandas?,How do I write a dataframe to CSV in pandas?,0,Programming
+What is the difference between synchronous and asynchronous code?,What is the difference between multithreading and multiprocessing?,0,Programming
+How do I install npm packages globally?,How do I update local npm dependencies?,0,Programming
+How do I create a virtual environment in Python using venv?,How do I activate an existing virtualenv on Windows?,0,Programming
+What is the difference between inner join and left join in SQL?,What is the difference between GROUP BY and ORDER BY in SQL?,0,Programming
+How do I set environment variables in Windows command prompt?,How do I set environment variables in Linux bash?,0,Programming
+How do I create a React custom hook?,How do I use useEffect hook in React?,0,Programming
+How do I serialize a model in FastAPI with Pydantic?,How do I validate request headers in FastAPI?,0,Programming
+How do I find memory leaks in a Node.js application?,How do I profile CPU usage in a Python script?,0,Programming
+What is the difference between REST API and GraphQL?,What is the difference between gRPC and REST?,0,Programming
+How do I kill a process running on port 8000 in Windows?,How do I find which process is listening on port 8080 in Linux?,0,Programming

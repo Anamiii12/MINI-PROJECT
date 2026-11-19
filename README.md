@@ -2,7 +2,14 @@
 
 **Intelligent Duplicate Question Detection Using Text Similarity Techniques**
 
-A fifth-semester CSE mini-project that compares two questions and displays a duplicate classification and similarity score. The React frontend is implemented; the Python NLP/ML backend is planned.
+A fifth-semester CSE mini-project for duplicate question detection. This repository now contains the React frontend and the FastAPI backend in `backend/`.
+
+## Project status
+
+- The frontend supports comparison, duplicate finding, CSV analysis, model and dataset views, history, and settings.
+- The FastAPI backend provides prediction, finder, dataset, model, history, and analytics endpoints. Run it locally with `python -m uvicorn backend.main:app --reload` from the repository root.
+- The GitHub Pages deployment uses the frontend's demo mode. It does not host the Python API; API-backed features need a separately deployed backend and a configured `VITE_API_BASE_URL`.
+- GitHub Actions builds and deploys the frontend to GitHub Pages on pushes to `main`.
 
 ## Running locally
 

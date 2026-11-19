@@ -1,60 +1,113 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import QuestionComparisonForm from '../components/QuestionComparisonForm.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
 import ResultCard from '../components/ResultCard.jsx'
 import { compareQuestions, isMockMode } from '../services/api.js'
-
+import { GitCompare, Sparkles, ShieldCheck } from 'lucide-react'
 
 export default function ComparePage() {
   const [question1, setQuestion1] = useState('')
   const [question2, setQuestion2] = useState('')
+  const [selectedModel, setSelectedModel] = useState('TF-IDF + Cosine Similarity')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   async function handleCompare(event) {
-    event.preventDefault()
+    if (event) event.preventDefault()
     if (loading || !question1.trim() || !question2.trim()) return
     setError('')
     setResult(null)
     setLoading(true)
-    try { setResult(await compareQuestions(question1.trim(), question2.trim())) }
-    catch { setError('Unable to analyse the questions. Please try again.') }
-    finally { setLoading(false) }
+    try {
+      const res = await compareQuestions(question1.trim(), question2.trim(), selectedModel)
+      setResult(res)
+    } catch {
+      setError('Unable to analyse the questions. Please verify input text.')
+    } finally {
+      setLoading(false)
+    }
   }
+
   function handleClear() {
     setQuestion1('')
     setQuestion2('')
     setResult(null)
     setError('')
   }
+
   function handleQuestionChange(index, value) {
     if (index === 0) setQuestion1(value)
     else setQuestion2(value)
     setResult(null)
     setError('')
   }
+
   function handleSwap() {
+    const temp = question1
     setQuestion1(question2)
-    setQuestion2(question1)
+    setQuestion2(temp)
     setResult(null)
     setError('')
   }
+
   function handleExample(kind) {
     if (loading) return
-    setQuestion1(kind === 'similar' ? 'How can I learn Python?' : 'How do I install Python?')
-    setQuestion2(kind === 'similar' ? 'What is the best way to learn Python?' : 'What is cloud computing?')
+    if (kind === 'similar') {
+      setQuestion1('How can I learn Python?')
+      setQuestion2('What is the best way to learn Python?')
+    } else {
+      setQuestion1('How do I install Python?')
+      setQuestion2('What is cloud computing?')
+    }
     setResult(null)
     setError('')
   }
+
   return (
-      <section id="compare" aria-labelledby="compare-heading">
-        <div className="section-heading compare-heading"><div><p className="eyebrow">Text Similarity Analysis</p><h1 id="compare-heading">Compare Questions</h1></div><span className="mode-badge"><span className="status-dot" aria-hidden="true" />{isMockMode ? 'Demo Mode' : 'Backend Mode'}</span></div>
-        <p className="intro">Compare two questions and analyse how closely their meaning and wording match.</p>
-        <QuestionComparisonForm question1={question1} question2={question2} onQuestionChange={handleQuestionChange} onCompare={handleCompare} onSwap={handleSwap} onClear={handleClear} onExample={handleExample} loading={loading} />
-        {isMockMode && <p className="demo-note">Using demonstration logic until the NLP backend is connected.</p>}
-        <ErrorMessage message={error} />
-        <div aria-live="polite" aria-atomic="true">{result && <ResultCard result={result} />}</div>
-      </section>
+    <section id="compare" className="animate-fade-in" aria-labelledby="compare-heading">
+      <div className="page-header">
+        <div className="page-title-group">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="badge badge-info" style={{ textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              Pairwise Inference
+            </span>
+            <span className="badge badge-primary">
+              <span className="status-dot-active" />
+              Semantic Engine
+            </span>
+          </div>
+          <h1 id="compare-heading">Compare Questions</h1>
+          <p className="page-description">
+            Evaluate two inquiries to detect semantic duplication, calculate similarity scores, and review explainable token matching.
+          </p>
+        </div>
+      </div>
+
+      <QuestionComparisonForm
+        question1={question1}
+        question2={question2}
+        onQuestionChange={handleQuestionChange}
+        onCompare={handleCompare}
+        onSwap={handleSwap}
+        onClear={handleClear}
+        onExample={handleExample}
+        selectedModel={selectedModel}
+        onSelectModel={setSelectedModel}
+        loading={loading}
+      />
+
+      <ErrorMessage message={error} />
+
+      <div aria-live="polite" aria-atomic="true">
+        {result && (
+          <ResultCard
+            result={result}
+            question1={question1}
+            question2={question2}
+          />
+        )}
+      </div>
+    </section>
   )
 }

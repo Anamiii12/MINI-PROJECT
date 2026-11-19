@@ -1,0 +1,18 @@
+question1,question2,is_duplicate,category
+How do I install Google Chrome browser on Ubuntu terminal?,What commands are needed to install Chrome on Ubuntu using command line?,1,Technology
+How do I check my Ubuntu OS version from terminal?,Which terminal command shows the current Ubuntu release version?,1,Technology
+How can I fix 'Could not get lock /var/lib/dpkg/lock-frontend' error in Ubuntu?,How to resolve dpkg lock error when running apt update?,1,Technology
+How do I add a new user with sudo privileges in Ubuntu?,How can I give administrative root rights to a new user in Ubuntu?,1,Technology
+How do I find available disk space in Ubuntu via terminal?,What terminal command displays free hard drive storage in Linux?,1,Technology
+How to restart networking service in Ubuntu?,What is the command to restart network manager on Ubuntu Linux?,1,Technology
+How do I extract a .tar.gz file in Linux terminal?,What is the tar command to unzip a tarball archive in Ubuntu?,1,Technology
+How do I upgrade from Ubuntu 22.04 LTS to Ubuntu 24.04 LTS?,What is the command to update my Ubuntu LTS installation to the next release?,1,Technology
+How do I change file permissions with chmod in Linux?,How can I grant read and write permissions to a file using chmod?,1,Technology
+How do I find a file by name in Ubuntu using terminal?,Which command searches for files by filename in Linux directories?,1,Technology
+How do I install NVIDIA graphics drivers on Ubuntu?,How do I switch between integrated and dedicated graphics on Ubuntu?,0,Technology
+How do I dual boot Ubuntu with Windows 11?,How do I remove Ubuntu partition from dual boot with Windows?,0,Technology
+How do I configure static IP address in Ubuntu netplan?,How do I change DNS server address in Ubuntu?,0,Technology
+How do I mount a USB drive from command line in Linux?,How do I format an external hard drive with ext4 filesystem in Linux?,0,Technology
+How do I set up SSH key authentication on an Ubuntu server?,How do I change the default SSH listening port on Ubuntu?,0,Technology
+How do I view system error logs in Ubuntu with journalctl?,How do I check memory RAM usage in Ubuntu with top command?,0,Technology
+How do I create a symbolic link in Linux using ln?,How do I copy a directory recursively in Linux using cp?,0,Technology
